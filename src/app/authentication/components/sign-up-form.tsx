@@ -23,23 +23,31 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-const formSchema = z.object({
-  name: z.string("Nome Inválido").trim().min(1, "Nome é obrigatório"),
-  email: z.email("Email inválido"),
+const formSchema = z
+  .object({
+    name: z.string("Nome Inválido").trim().min(1, "Nome é obrigatório"),
+    email: z.email("Email inválido"),
     password: z.string().min(8, "Senha deve ter pelo menos 8 caracteres"),
     passwordConfirmation: z.string().min(8, "Senha não confere	"),
   })
-  .refine((data) => {
-    return data.password === data.passwordConfirmation;
-  },{
-    error: "As Senhas não conferem",
-    path: ["passwordConfirmation"],
-  });
+  .refine(
+    (data) => {
+      return data.password === data.passwordConfirmation;
+    },
+    {
+      error: "As Senhas não conferem",
+      path: ["passwordConfirmation"],
+    },
+  );
 
 type FormValues = z.infer<typeof formSchema>;
 
 const SignUpForm = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -50,9 +58,25 @@ const SignUpForm = () => {
     },
   });
 
-  function onSubmit(values: FormValues) {
-    console.log("Formulário validado e enviado");
-    console.log(values);
+  async function onSubmit(values: FormValues) {
+    await authClient.signUp.email({
+      name: values.name,
+      email: values.email,
+      password: values.password,
+      fetchOptions: {
+        onSuccess: () => {
+          toast.success("Conta criada com sucesso");
+          router.push("/");
+        },
+        onError: (error) => {
+          if (error.error.code === "USER_ALREADY_EXISTS") {
+            toast.error("Email já cadastrado");
+            form.setError("email", { message: "Email já cadastrado" });
+          }
+          toast.error(error.error.message);
+        },
+      },
+    });
   }
   return (
     <>
