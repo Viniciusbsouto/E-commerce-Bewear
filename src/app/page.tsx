@@ -1,11 +1,13 @@
-import React from 'react';
+import React from "react";
+import { Button } from "@/components/ui/button";
 
 const home = () => {
   return (
-    <div className="m-8 flex justify-center items-center">
-      <h1 className="text-3xl bg-red-500 inline p-2 rounded-md font-bold ">
+    <div className="m-8 flex flex-col items-center justify-center gap-4">
+      <h1 className="inline rounded-md bg-red-500 p-2 text-3xl font-bold">
         Home
       </h1>
+      <Button>Clique aqui</Button>
     </div>
   );
 };
