@@ -39,7 +39,7 @@ const Home = async () => {
           />
         </div>
 
-        <PartnerBrands title="Marcas parceiras" />
+        <PartnerBrands/>
 
         <ProductList title="Produtos em destaque" products={products} />
 
