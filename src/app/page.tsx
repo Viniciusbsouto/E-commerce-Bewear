@@ -3,6 +3,7 @@ import Header from "../components/ui/common/header";
 import Image from "next/image";
 import { db } from "@/db";
 import ProductList from "@/components/ui/common/product-list";
+import CategorySelector from "@/components/ui/common/category-selector";
 
 const Home = async () => {
   const products = await db.query.productTable.findMany({
@@ -10,7 +11,7 @@ const Home = async () => {
       variants: true,
     },
   });
-  console.log(products);
+  const categories = await db.query.categoryTable.findMany({});
   return (
     <>
       <Header />
@@ -26,6 +27,11 @@ const Home = async () => {
           />
         </div>
         <ProductList title="Produtos em destaque" products={products} />
+
+        <div className="px-5">
+          <CategorySelector categories={categories} />
+        </div>
+
         <div className="px-5">
           <Image
             src="/banner-02.png"
