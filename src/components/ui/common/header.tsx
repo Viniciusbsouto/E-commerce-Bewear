@@ -14,7 +14,8 @@ import Image from "next/image";
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import Link from "next/link";
-
+import Cart from "./cart";
+  
 const Header = () => {
   const { data: session } = authClient.useSession();
   return (
@@ -78,6 +79,7 @@ const Header = () => {
             </div>
           </SheetContent>
         </Sheet>
+        <Cart />
       </div>
     </header>
   );

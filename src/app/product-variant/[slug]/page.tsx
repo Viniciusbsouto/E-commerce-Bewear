@@ -36,6 +36,7 @@ const ProductVariantPage = async ({ params }: ProductVariantPageProps) => {
       variants: true,
     },
   });
+  
   return (
     <>
       <Header />
