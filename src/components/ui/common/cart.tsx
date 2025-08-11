@@ -9,19 +9,15 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "../button";
 import { ShoppingCartIcon } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { getCart } from "@/actions/get-cart";
 import CartItem from "./cart-item";
 import { ScrollArea } from "../scroll-area";
 import { Separator } from "../separator";
 import { formatCentsToBRL } from "@/helpers/money";
 import CartItemSkeleton from "./cart-item-skeleton";
+import { useCart } from "@/hooks/queries/use-cart";
 
 const Cart = () => {
-  const { data: cart, isPending: isLoading } = useQuery({
-    queryKey: ["cart"],
-    queryFn: () => getCart(),
-  });
+  const { data: cart, isPending: isLoading } = useCart();
   return (
     <Sheet>
       <SheetTrigger asChild>
