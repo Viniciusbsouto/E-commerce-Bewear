@@ -12,9 +12,10 @@ import { ShoppingCartIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getCart } from "@/actions/get-cart";
 import CartItem from "./cart-item";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { ScrollArea } from "../scroll-area";
 import { Separator } from "../separator";
 import { formatCentsToBRL } from "@/helpers/money";
+import CartItemSkeleton from "./cart-item-skeleton";
 
 const Cart = () => {
   const { data: cart, isPending: isLoading } = useQuery({
@@ -37,19 +38,23 @@ const Cart = () => {
           <div className="flex h-full max-h-full flex-col overflow-hidden">
             <ScrollArea className="h-full">
               <div className="flex h-full flex-col gap-8">
-                {cart?.items?.map((item) => (
-                  <CartItem
-                    key={item.id}
-                    id={item.id}
-                    productName={item.productVariant.product.name}
-                    productVariantName={item.productVariant.name}
-                    productVariantImageUrl={item.productVariant.imageUrl}
-                    productVariantPriceInCents={
-                      item.productVariant.priceInCents
-                    }
-                    quantity={item.quantity}
-                  />
-                ))}
+                {isLoading
+                  ? Array.from({ length: 3 }).map((_, i) => (
+                      <CartItemSkeleton key={i} />
+                    ))
+                  : cart?.items?.map((item) => (
+                      <CartItem
+                        key={item.id}
+                        id={item.id}
+                        productName={item.productVariant.product.name}
+                        productVariantName={item.productVariant.name}
+                        productVariantImageUrl={item.productVariant.imageUrl}
+                        productVariantPriceInCents={
+                          item.productVariant.priceInCents
+                        }
+                        quantity={item.quantity}
+                      />
+                    ))}
               </div>
             </ScrollArea>
           </div>
