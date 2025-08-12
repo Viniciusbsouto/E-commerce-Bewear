@@ -15,6 +15,7 @@ import { Separator } from "../separator";
 import { formatCentsToBRL } from "@/helpers/money";
 import CartItemSkeleton from "./cart-item-skeleton";
 import { useCart } from "@/hooks/queries/use-cart";
+import Link from "next/link";
 
 const Cart = () => {
   const { data: cart, isPending: isLoading } = useCart();
@@ -83,7 +84,9 @@ const Cart = () => {
                 </p>
               </div>
 
-              <Button className="mt-5 rounded-full">Finalizar compra</Button>
+              <Button className="mt-5 rounded-full" asChild>
+                <Link href="/cart/identification">Finalizar compra</Link>
+              </Button>
             </div>
           )}
         </div>
