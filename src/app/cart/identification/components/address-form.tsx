@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { PatternFormat } from "react-number-format";
+import { toast } from "sonner";
+import { useCreateShippingAddress } from "@/hooks/mutations/use-create-shipping-address";
 
 import {
   Form,
@@ -35,6 +37,8 @@ const addressFormSchema = z.object({
 type AddressFormValues = z.infer<typeof addressFormSchema>;
 
 const AddressForm = () => {
+  const createShippingAddressMutation = useCreateShippingAddress();
+
   const form = useForm<AddressFormValues>({
     resolver: zodResolver(addressFormSchema),
     defaultValues: {
@@ -52,8 +56,14 @@ const AddressForm = () => {
     },
   });
 
-  const onSubmit = (values: AddressFormValues) => {
-    console.log(values);
+  const onSubmit = async (values: AddressFormValues) => {
+    try {
+      await createShippingAddressMutation.mutateAsync(values);
+      toast.success("Endereço criado com sucesso!");
+      form.reset();
+    } catch (error) {
+      toast.error("Erro ao criar endereço. Tente novamente.");
+    }
   };
 
   return (
@@ -246,8 +256,14 @@ const AddressForm = () => {
             </div>
 
             <div className="flex justify-end pt-4">
-              <Button type="submit" className="w-full md:w-auto">
-                Salvar Endereço
+              <Button
+                type="submit"
+                className="w-full md:w-auto"
+                disabled={createShippingAddressMutation.isPending}
+              >
+                {createShippingAddressMutation.isPending
+                  ? "Salvando..."
+                  : "Salvar Endereço"}
               </Button>
             </div>
           </form>
