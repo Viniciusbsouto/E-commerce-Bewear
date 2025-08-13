@@ -34,7 +34,9 @@ const Addresses = () => {
       await updateCartShippingAddressMutation.mutateAsync({
         shippingAddressId: selectedAddress,
       });
-      toast.success("Endereço vinculado ao carrinho com sucesso!");
+      toast.success("Endereço vinculado ao carrinho com sucesso!", {
+        position: "top-center",
+      });
     } catch {
       toast.error("Erro ao vincular endereço ao carrinho");
     }
