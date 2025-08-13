@@ -1,17 +1,44 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import AddressForm from "./address-form";
 import { useUserAddresses } from "@/hooks/queries/use-user-addresses";
+import { useUpdateCartShippingAddress } from "@/hooks/mutations/use-update-cart-shipping-address";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCart } from "@/hooks/queries/use-cart";
 
 const Addresses = () => {
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
   const { data: addresses, isLoading, error } = useUserAddresses();
+  const updateCartShippingAddressMutation = useUpdateCartShippingAddress();
+  const { data: cart } = useCart();
+
+  useEffect(() => {
+    if (cart?.shippingAddress?.id) {
+      setSelectedAddress(cart.shippingAddress.id);
+    }
+  }, [cart]);
+
+  const handleGoToPayment = async () => {
+    if (!selectedAddress || selectedAddress === "add_new") {
+      toast.error("Selecione um endereço para continuar");
+      return;
+    }
+
+    try {
+      await updateCartShippingAddressMutation.mutateAsync({
+        shippingAddressId: selectedAddress,
+      });
+      toast.success("Endereço vinculado ao carrinho com sucesso!");
+    } catch {
+      toast.error("Erro ao vincular endereço ao carrinho");
+    }
+  };
 
   return (
     <Card>
@@ -72,7 +99,26 @@ const Addresses = () => {
             </Card>
           </RadioGroup>
         )}
-        {selectedAddress === "add_new" && <AddressForm />}
+        {selectedAddress === "add_new" && (
+          <AddressForm
+            onAddressCreated={(addressId: string) => {
+              setSelectedAddress(addressId);
+            }}
+          />
+        )}
+        {selectedAddress && selectedAddress !== "add_new" && (
+          <div className="mt-4 flex justify-end">
+            <Button
+              onClick={handleGoToPayment}
+              disabled={updateCartShippingAddressMutation.isPending}
+              className="w-full md:w-auto"
+            >
+              {updateCartShippingAddressMutation.isPending
+                ? "Processando..."
+                : "Ir para Pagamento"}
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

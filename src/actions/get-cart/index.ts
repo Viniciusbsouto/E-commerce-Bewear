@@ -3,7 +3,6 @@
 import { db } from "@/db";
 import { cartTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
 export const getCart = async () => {
@@ -16,6 +15,7 @@ export const getCart = async () => {
   const cart = await db.query.cartTable.findFirst({
     where: (cart, { eq }) => eq(cart.userId, session.user.id),
     with: {
+      shippingAddress: true,
       items: {
         with: {
           productVariant: {
@@ -34,7 +34,12 @@ export const getCart = async () => {
         userId: session.user.id,
       })
       .returning();
-    return { ...newCart, items: [], totalPriceInCents: 0 };
+    return {
+      ...newCart,
+      items: [],
+      shippingAddress: null,
+      totalPriceInCents: 0,
+    };
   }
   return {
     ...cart,

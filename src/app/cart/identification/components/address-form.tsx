@@ -7,6 +7,7 @@ import { z } from "zod";
 import { PatternFormat } from "react-number-format";
 import { toast } from "sonner";
 import { useCreateShippingAddress } from "@/hooks/mutations/use-create-shipping-address";
+import { useUpdateCartShippingAddress } from "@/hooks/mutations/use-update-cart-shipping-address";
 
 import {
   Form,
@@ -36,8 +37,13 @@ const addressFormSchema = z.object({
 
 type AddressFormValues = z.infer<typeof addressFormSchema>;
 
-const AddressForm = () => {
+interface AddressFormProps {
+  onAddressCreated?: (addressId: string) => void;
+}
+
+const AddressForm = ({ onAddressCreated }: AddressFormProps) => {
   const createShippingAddressMutation = useCreateShippingAddress();
+  const updateCartShippingAddressMutation = useUpdateCartShippingAddress();
 
   const form = useForm<AddressFormValues>({
     resolver: zodResolver(addressFormSchema),
@@ -58,10 +64,18 @@ const AddressForm = () => {
 
   const onSubmit = async (values: AddressFormValues) => {
     try {
-      await createShippingAddressMutation.mutateAsync(values);
+      const newAddress =
+        await createShippingAddressMutation.mutateAsync(values);
       toast.success("Endereço criado com sucesso!");
+
+      await updateCartShippingAddressMutation.mutateAsync({
+        shippingAddressId: newAddress.id,
+      });
+      toast.success("Endereço vinculado ao carrinho com sucesso!");
+
       form.reset();
-    } catch (error) {
+      onAddressCreated?.(newAddress.id);
+    } catch {
       toast.error("Erro ao criar endereço. Tente novamente.");
     }
   };
@@ -259,9 +273,13 @@ const AddressForm = () => {
               <Button
                 type="submit"
                 className="w-full md:w-auto"
-                disabled={createShippingAddressMutation.isPending}
+                disabled={
+                  createShippingAddressMutation.isPending ||
+                  updateCartShippingAddressMutation.isPending
+                }
               >
-                {createShippingAddressMutation.isPending
+                {createShippingAddressMutation.isPending ||
+                updateCartShippingAddressMutation.isPending
                   ? "Salvando..."
                   : "Salvar Endereço"}
               </Button>
