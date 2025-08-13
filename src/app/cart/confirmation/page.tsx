@@ -1,15 +1,16 @@
+import Footer from "@/components/ui/common/footer";
 import Header from "@/components/ui/common/header";
 import { db } from "@/db";
-import { cartTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import Addresses from "./components/addresses";
-import CartSumary from "./components/cart-sumary";
-import Footer from "@/components/ui/common/footer";
+import CartSumary from "../identification/components/cart-sumary";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatAddress } from "../helpers/addresses";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-const IdentificationPage = async () => {
+const ConfirmationPage = async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -38,19 +39,37 @@ const IdentificationPage = async () => {
     (acc, item) => acc + item.productVariant.priceInCents * item.quantity,
     0,
   );
+  if (!cart.shippingAddress) {
+    redirect("/cart/identification");
+  }
   return (
     <div>
       <Header />
-      <div className="space-y-4 px-5">
-        <Addresses />
+      <div className="px-5">
+        <h1 className="text-2xl font-bold">Confirmação</h1>
+        <Card>
+          <CardHeader>
+            <CardTitle>Identificação</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <Card>
+              <CardContent>
+                <p className="text-sm">{formatAddress(cart.shippingAddress)}</p>
+              </CardContent>
+            </Card>
+            <Button className="size-lg mt-4 w-full rounded-full">
+              <Link href="/cart/identification">Finalizar compra</Link>
+            </Button>
+          </CardContent>
+        </Card>
         <CartSumary
           subtotalInCents={cartTotalInCents}
           totalInCents={cartTotalInCents}
           products={cart.items.map((item) => ({
             id: item.id,
             name: item.productVariant.product.name,
-            quantity: item.quantity,
             variantName: item.productVariant.name,
+            quantity: item.quantity,
             priceInCents: item.productVariant.priceInCents,
             imageUrl: item.productVariant.imageUrl,
           }))}
@@ -63,4 +82,4 @@ const IdentificationPage = async () => {
   );
 };
 
-export default IdentificationPage;
+export default ConfirmationPage;

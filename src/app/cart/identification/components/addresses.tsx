@@ -11,12 +11,15 @@ import { useUserAddresses } from "@/hooks/queries/use-user-addresses";
 import { useUpdateCartShippingAddress } from "@/hooks/mutations/use-update-cart-shipping-address";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCart } from "@/hooks/queries/use-cart";
+import { useRouter } from "next/navigation";
+import { formatAddress } from "../../helpers/addresses";
 
 const Addresses = () => {
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
   const { data: addresses, isLoading, error } = useUserAddresses();
   const updateCartShippingAddressMutation = useUpdateCartShippingAddress();
   const { data: cart } = useCart();
+  const router = useRouter();
 
   useEffect(() => {
     if (cart?.shippingAddress?.id) {
@@ -37,6 +40,7 @@ const Addresses = () => {
       toast.success("Endereço vinculado ao carrinho com sucesso!", {
         position: "top-center",
       });
+      router.push("/cart/confirmation");
     } catch {
       toast.error("Erro ao vincular endereço ao carrinho");
     }
@@ -71,13 +75,7 @@ const Addresses = () => {
                         className="block cursor-pointer"
                       >
                         <div className="text-sm font-medium">
-                          {address.recipientName}, {address.street},{" "}
-                          {address.number}
-                          {address.complement && `, ${address.complement}`}
-                        </div>
-                        <div className="text-muted-foreground text-xs">
-                          {address.neighborhood}, {address.city} -{" "}
-                          {address.state} - {address.zipCode}
+                          <p className="text-sm">{formatAddress(address)}</p>
                         </div>
                       </Label>
                     </div>
