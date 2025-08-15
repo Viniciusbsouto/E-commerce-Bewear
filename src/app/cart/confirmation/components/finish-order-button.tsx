@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useFinishOrder } from "@/hooks/mutations/use-finish-order";
+import { loadStripe } from "@stripe/stripe-js";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
@@ -13,12 +14,26 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { createCheckoutSession } from "@/actions/create-checkou-session";
 
 const FinishOrderButton = () => {
   const [successDialogIsOpen, setSuccessDialogIsOpen] = useState(false);
   const finishOrderMutation = useFinishOrder();
-  const handleFinishOrder = () => {
-    finishOrderMutation.mutate();
+  const handleFinishOrder = async () => {
+    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+      throw new Error("Stripe publishable key is not set");
+    }
+    const { orderId } = await finishOrderMutation.mutateAsync();
+    const checkoutSession = await createCheckoutSession({
+      orderId: orderId,
+    });
+    const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+    if (!stripe) {
+      throw new Error("Stripe is not loaded");
+    }
+    await stripe.redirectToCheckout({
+      sessionId: checkoutSession.id,
+    });
     setSuccessDialogIsOpen(true);
   };
   return (
