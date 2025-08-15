@@ -1,12 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import {
-  cartTable,
-  orderItemTable,
-  orderTable,
-  shippingAddressTable,
-} from "@/db/schema";
+import { cartTable, orderItemTable, orderTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";

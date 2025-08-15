@@ -15,13 +15,17 @@ import {
 } from "@/components/ui/dialog";
 
 const FinishOrderButton = () => {
-  const [successDialogIsOpen, setSuccessDialogIsOpen] = useState(true);
+  const [successDialogIsOpen, setSuccessDialogIsOpen] = useState(false);
   const finishOrderMutation = useFinishOrder();
+  const handleFinishOrder = () => {
+    finishOrderMutation.mutate();
+    setSuccessDialogIsOpen(true);
+  };
   return (
     <>
       <Button
         className="size-lg mt-4 w-full rounded-full"
-        onClick={() => finishOrderMutation.mutate()}
+        onClick={handleFinishOrder}
         disabled={finishOrderMutation.isPending}
       >
         {finishOrderMutation.isPending && (
