@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import Footer from "@/components/ui/common/footer";
 import Header from "@/components/ui/common/header";
 import ProductList from "@/components/ui/common/product-list";
@@ -9,8 +8,6 @@ import { eq } from "drizzle-orm";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import VariantSelector from "./components/variant-selector";
-import QuantitySelector from "./components/quantity-selector";
-import AddToCartButton from "./components/add-to-cart-button";
 import ProductActions from "./components/product-actions";
 
 interface ProductVariantPageProps {

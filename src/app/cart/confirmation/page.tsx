@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatAddress } from "../helpers/addresses";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import FinishOrderButton from "./components/finish-order-button";
 
 const ConfirmationPage = async () => {
   const session = await auth.api.getSession({
@@ -57,9 +58,7 @@ const ConfirmationPage = async () => {
                 <p className="text-sm">{formatAddress(cart.shippingAddress)}</p>
               </CardContent>
             </Card>
-            <Button className="size-lg mt-4 w-full rounded-full">
-              <Link href="/cart/identification">Finalizar compra</Link>
-            </Button>
+            <FinishOrderButton />
           </CardContent>
         </Card>
         <CartSumary

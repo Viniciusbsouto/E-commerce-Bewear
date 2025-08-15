@@ -1,7 +1,6 @@
 import { productVariantTable } from "@/db/schema";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
 interface VariantSelectorProps {
   selectedVariantSlug: string;
