@@ -76,5 +76,8 @@ export const createCheckoutSession = async (
     }),
   });
 
-  return checkoutSession;
+  return {
+    id: checkoutSession.id,
+    url: checkoutSession.url,
+  };
 };

@@ -14,7 +14,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { createCheckoutSession } from "@/actions/create-checkou-session";
+import { createCheckoutSession } from "@/actions/create-checkout-session";
 
 const FinishOrderButton = () => {
   const [successDialogIsOpen, setSuccessDialogIsOpen] = useState(false);
