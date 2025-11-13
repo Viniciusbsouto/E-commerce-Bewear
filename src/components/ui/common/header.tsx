@@ -9,13 +9,19 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { authClient } from "@/lib/auth-client";
-import { LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
+import {
+  LogInIcon,
+  LogOutIcon,
+  MenuIcon,
+  PackageIcon,
+  ChevronRight,
+} from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import Link from "next/link";
 import Cart from "./cart";
-  
+
 const Header = () => {
   const { data: session } = authClient.useSession();
   return (
@@ -63,6 +69,24 @@ const Header = () => {
                       onClick={() => authClient.signOut()}
                     >
                       <LogOutIcon />
+                    </Button>
+                  </div>
+                  <div className="mt-4">
+                    <Button
+                      asChild
+                      variant="ghost"
+                      className="w-full justify-start"
+                    >
+                      <Link
+                        href="/my-orders"
+                        className="flex w-full items-center justify-between"
+                      >
+                        <span className="flex items-center gap-2">
+                          <PackageIcon />
+                          Meus pedidos
+                        </span>
+                        <ChevronRight />
+                      </Link>
                     </Button>
                   </div>
                 </>
