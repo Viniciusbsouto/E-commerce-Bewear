@@ -9,13 +9,13 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "../button";
 import { ShoppingCartIcon } from "lucide-react";
+import Link from "next/link";
 import CartItem from "./cart-item";
 import { ScrollArea } from "../scroll-area";
 import { Separator } from "../separator";
 import { formatCentsToBRL } from "@/helpers/money";
 import CartItemSkeleton from "./cart-item-skeleton";
 import { useCart } from "@/hooks/queries/use-cart";
-import Link from "next/link";
 
 const Cart = () => {
   const { data: cart, isPending: isLoading } = useCart();
@@ -35,24 +35,32 @@ const Cart = () => {
           <div className="flex h-full max-h-full flex-col overflow-hidden">
             <ScrollArea className="h-full">
               <div className="flex h-full flex-col gap-8">
-                {isLoading
-                  ? Array.from({ length: 3 }).map((_, i) => (
-                      <CartItemSkeleton key={i} />
-                    ))
-                  : cart?.items?.map((item) => (
-                      <CartItem
-                        key={item.id}
-                        id={item.id}
-                        productVariantId={item.productVariant.id}
-                        productName={item.productVariant.product.name}
-                        productVariantName={item.productVariant.name}
-                        productVariantImageUrl={item.productVariant.imageUrl}
-                        productVariantPriceInCents={
-                          item.productVariant.priceInCents
-                        }
-                        quantity={item.quantity}
-                      />
-                    ))}
+                {isLoading ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <CartItemSkeleton key={i} />
+                  ))
+                ) : cart?.items && cart.items.length > 0 ? (
+                  cart.items.map((item) => (
+                    <CartItem
+                      key={item.id}
+                      id={item.id}
+                      productVariantId={item.productVariant.id}
+                      productName={item.productVariant.product.name}
+                      productVariantName={item.productVariant.name}
+                      productVariantImageUrl={item.productVariant.imageUrl}
+                      productVariantPriceInCents={
+                        item.productVariant.priceInCents
+                      }
+                      quantity={item.quantity}
+                    />
+                  ))
+                ) : (
+                  <div className="text-muted-foreground flex flex-col items-center justify-center py-12 text-center">
+                    <ShoppingCartIcon className="h-12 w-12 opacity-60" />
+                    <p className="mt-4 font-medium">Seu carrinho está vazio</p>
+                    <p className="text-sm">Adicione produtos para continuar</p>
+                  </div>
+                )}
               </div>
             </ScrollArea>
           </div>

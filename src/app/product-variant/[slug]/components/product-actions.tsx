@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import AddToCartButton from "./add-to-cart-button";
 import { useState } from "react";
 import { MinusIcon, PlusIcon } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { addProductToCart } from "@/actions/add-cart-product";
+import { useRouter } from "next/navigation";
 
 interface ProductActionsProps {
   productVariantId: string;
@@ -41,11 +44,44 @@ const ProductActions = ({ productVariantId }: ProductActionsProps) => {
           productVariantId={productVariantId}
           quantity={quantity}
         />
-        <Button className="rounded-full" size="lg">
-          Comprar agora
-        </Button>
+        <ComprarAgoraButton
+          productVariantId={productVariantId}
+          quantity={quantity}
+        />
       </div>
     </>
+  );
+};
+
+const ComprarAgoraButton = ({
+  productVariantId,
+  quantity,
+}: {
+  productVariantId: string;
+  quantity: number;
+}) => {
+  const router = useRouter();
+  const { mutate, isPending } = useMutation({
+    mutationFn: () =>
+      addProductToCart({
+        productVariantId,
+        quantity,
+      }),
+    onSuccess: () => {
+      router.push("/cart/identification");
+    },
+  });
+
+  return (
+    <Button
+      className="rounded-full"
+      size="lg"
+      variant="default"
+      disabled={isPending}
+      onClick={() => mutate()}
+    >
+      Comprar agora
+    </Button>
   );
 };
 
