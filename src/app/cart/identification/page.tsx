@@ -1,8 +1,7 @@
 import Header from "@/components/ui/common/header";
 import { db } from "@/db";
-import { cartTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { eq } from "drizzle-orm";
+// eq from drizzle-orm not required here (using inline arrow where provides eq)
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Addresses from "./components/addresses";

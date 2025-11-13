@@ -7,8 +7,7 @@ import { redirect } from "next/navigation";
 import CartSumary from "../identification/components/cart-sumary";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatAddress } from "../helpers/addresses";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+// Button and Link are not used on this page
 import FinishOrderButton from "./components/finish-order-button";
 
 const ConfirmationPage = async () => {
